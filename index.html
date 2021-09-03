@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encode</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Balsamiq Sans', cursive;
+    box-sizing: border-box;
+}
+body{
+    height: auto;
+    width: 100vw;
+    padding: 10px;
+    padding-bottom: 200px;
+}
+.heading{
+    margin: 10px 10px;
+    font-weight: 200;
+}
+#normalInput, #normalOutput{
+    height: 25vh;
+    width: 95%;
+    display: block;
+    margin:20px auto;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #fafafa;
+    outline: none;
+    font-size: 1em;
+    transition: 0.1s linear height;
+    resize: none;
+    /* font-family: 'Courier New', Courier, monospace; */
+}
+#normalInput{
+    height: 200px;
+}
+#normalOutput{
+    background-color: #eee;
+}
+#normalInput:focus{
+    border-color: dodgerblue;
+    /* height: 180px; */
+}
+
+
+.buttons{
+    width: 100%;
+    padding:20px 5%;
+    background-color: #fff;
+    /* background-color: #ddd; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+}
+.buttons button{
+    width: 45%;
+    border: none;
+    outline: none;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: dodgerblue;
+    color: white;
+    /* font-weight: bold; */
+    letter-spacing: 1px;
+}
+.buttons button:first-child{
+    background-color: #eee;
+    color: black;
+}
+
+h3{
+    font-weight: normal;
+}
+
+.whatsapp{
+    padding: 15px 25px 15px 20px;
+    display: flex;
+    margin:30px auto;
+    justify-content: center;
+    align-items: flex-end;
+    /* background-color: rgb(163, 255, 178); */
+    background-color: #25d366;
+    color: white;
+    border-radius: 100px;
+    position: absolute;
+    margin-left: 50%;
+    transform: translate(-50%);
+    transition: 0.1s linear filter;
+    margin-top: 70px;
+}
+.whatsapp h3{
+    white-space: nowrap;
+}
+
+.whatsapp img{
+    height: 1.6em;
+    margin-right: 10px;
+    filter: invert(1);
+}
+.whatsapp:active{
+    filter: blur(5px);
+}
+
+
+
+
+
+
+
+
+.press{
+    transition: 0.1s linear transform;
+}
+.press:active{
+    transform: scale(0.95);
+}
+a{
+    text-decoration: none;
+    color: dodgerblue;
+}
+.center{
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <h1 class="heading">Write Here</h1>
+    <textarea id="normalInput" placeholder="Paste / Write Text here..." autofocus="true"></textarea>
+    <div class="buttons">
+        <button class="press" onclick="clearText()">Clear Text</button>
+        <button class="press" onclick="copyText()">Copy</button>
+    </div>
+    <textarea id="normalOutput" placeholder="Output will be here..." disabled="true"></textarea>
+    <a href="whatsapp://send?text=" id="whatsappLink">
+        <div class="whatsapp">
+            <img src="https://img.icons8.com/material-outlined/96/000000/whatsapp--v1.png"/>
+            <h3>Send in Whatsapp</h3>
+        </div> 
+    </a>
+
+    
+    <h3 class="center">By <a href="https://www.facebook.com/Abinash.Dark.Rose/">Abinash</a>,  Github <a href="https://github.com/DarkRoseAbinash">Link</a></h3>
+    <p class="center">*Emoji Supported</p>
+
+<script>
+let textElem = document.getElementById("normalInput");
+let outElem = document.getElementById("normalOutput");
+function clearText (){
+    textElem.value = "";
+    textElem.focus()
+}
+
+function copyText (){
+    outElem.disabled = false;
+    outElem.select();
+    outElem.setSelectionRange(0, 99999)
+    document.execCommand("copy");
+    outElem.disabled = true;
+    textElem.select();
+}
+
+
+//Set Oninput event on input
+textElem.oninput = () =>{
+    text = textElem.value;
+    let encoded = "";
+    let isFound = false;
+    for (i in text) {
+        if (charEncode.indexOf(text[i]) === -1) {
+            isFound = true;
+            break;
+        }
+    }
+    if (isFound)
+        encoded = encode(text)
+    else
+        decode(text);
+
+    if (!text)
+        outElem.value = "";
+    
+    document.getElementById("whatsappLink").href = "whatsapp://send?text=" + encoded;
+}
+
+const charEncode = "⁛‥∷⁖⁙⁘⁝∴∵∶⁚";
+
+function encode (txt){
+    let encodedString = "";
+    let asciiArr = []
+    for (i in txt)
+        asciiArr.push(txt[i].charCodeAt(0))
+    for (i in asciiArr)
+        encodedString += encodeCh(asciiArr[i]) + "⁚";
+    
+    encodedString = encodedString.substr(0, encodedString.length - 1);
+    outElem.value = encodedString;
+    return encodedString;
+    
+}
+
+function decode (txt){
+    let decodedString = ""
+    txt = txt.split("⁚");
+    for (i in txt)
+        decodedString += decodeCh(txt[i]);
+    outElem.value = decodedString;
+}
+
+function decodeCh (eCh){
+    let num = "";
+    for (i in eCh)
+        num += charEncode.indexOf(eCh[i]);
+    return String.fromCharCode(Number(num));
+}
+
+function encodeCh(uni){
+    let encodedUni = "";
+    uni = uni.toString();
+    for (i in uni) {
+        encodedUni += charEncode[Number(uni[i])];
+    }
+    return encodedUni;
+}
+
+</script>
+</body>
+
+</html>
